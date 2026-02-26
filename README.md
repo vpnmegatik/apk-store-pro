@@ -1,75 +1,66 @@
 # apk-store-pro
 
-Ultra-premium APK marketplace UI system + dashboard architecture built with Next.js 15 App Router, Tailwind CSS, shadcn-style reusable UI, Framer Motion, and Supabase-ready backend scaffolding.
+Production-ready APK marketplace built on Next.js 15 App Router with a single, unified design system and consolidated layout architecture.
 
 ## What is included
 
-### 🎨 Design system
-- Tokenized color system for dark/light themes (default dark)
-- Inter typography and tight heading rhythm
-- 8px spacing grid and rounded glass surfaces
-- Aurora gradients, neon glow rings, and depth shadows
-- Motion presets for cards, fade-up reveals, and sidebar transitions
+### 🎨 Unified design system
+- One token source via `app/globals.css` CSS variables + `tailwind.config.ts`
+- Dark-first + light theme support with persisted theme preference
+- Inter typography, 8px spacing rhythm, soft shadows, glassmorphism cards, and aurora backgrounds
+- Shared motion presets for transitions and sidebar interactions
 
-### 🌐 Public UX
-- Premium homepage (hero glow, trending carousel, categories, featured blocks, testimonials, CTA)
-- App details page with screenshots slider, tabs, timeline, and related apps
-- Categories with filter sidebar, masonry layout, and sorting controls
-- Instant search page with debounce + match highlighting
-- Publisher landing page with monetization-first messaging
+### 🌐 Public product surfaces
+- Homepage with hero, trending, categories, featured sections, testimonials, and CTA
+- App details (SSR-friendly route), categories, search, and publisher landing pages
+- Public route-group layout for consistent top navigation and mobile bottom nav
 
-### 📊 Dashboard UX
-- Reusable dashboard shell with:
-  - collapsible sidebar
-  - sticky topbar
-  - breadcrumbs
-  - global search, notifications, avatar, theme toggle
-- Admin pages: overview, apps management, ads manager, users
-- Publisher pages: control center, my apps, upload wizard, analytics, revenue
-- Shared settings and user dashboard pages
+### 📊 Dashboard system
+- Single dashboard layout wrapper for all admin/publisher/user pages
+- Collapsible sidebar, sticky top bar, breadcrumb/title generation from App Router path
+- Admin: overview, apps management, ads manager, users
+- Publisher: overview, my apps, upload wizard, analytics, revenue
+- Shared settings and user dashboard routes
 
-### 🧩 Component library
-- Gradient button
-- Glass card
-- Tag badges
-- Skeleton shimmer
-- Animated counter
-- Tabs
-- Modal
-- Toast notifications
-- Mobile bottom navigation
+### 🧩 Reusable components
+- Buttons, badges, tabs, modal, toast, skeletons, animated counters
+- Marketing and dashboard component primitives
+- Supabase-ready API routes and schema scaffolding
 
 ## Folder highlights
 
 ```txt
 app/
-  (public)/
-  auth/
-  dashboard/
+  (public)/        # public website routes + layout
+  auth/            # login/register
+  dashboard/       # dashboard routes + shared dashboard layout
+  api/             # platform APIs
 components/
+  app/
   dashboard/
   layout/
   marketing/
   providers/
   ui/
-hooks/
 lib/
-  design/
   motion/
+  auth.ts
+  storage.ts
+  supabase.ts
+  utils.ts
 ```
 
-## Key files
-- `lib/design/tokens.ts` → source of visual token truth
-- `lib/motion/presets.ts` → motion primitives
-- `components/layout/dashboard-shell.tsx` → SaaS shell
-- `app/globals.css` + `tailwind.config.ts` → theme + utility system
+## Run locally
 
-## Run
 ```bash
 npm install
 npm run dev
 ```
 
-## Notes
-- Supabase schema and API scaffolding from prior implementation are preserved.
-- Current iteration focuses on premium visual system and dashboard architecture requested in product design brief.
+## Quality checks
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```

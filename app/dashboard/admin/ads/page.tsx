@@ -1,8 +1,6 @@
-import { DashboardShell } from "@/components/layout/dashboard-shell";
-
 export default function AdminAdsManagerPage() {
   return (
-    <DashboardShell title="Ads Manager" breadcrumb="Dashboard / Ads Manager">
+    <>
       <div className="grid gap-4 lg:grid-cols-3">
         {[1, 2, 3].map((item) => (
           <div key={item} className="premium-card p-4">
@@ -23,6 +21,6 @@ export default function AdminAdsManagerPage() {
           <div className="rounded-xl border border-white/10 p-3">RPM: $12.3</div>
         </div>
       </div>
-    </DashboardShell>
+    </>
   );
 }

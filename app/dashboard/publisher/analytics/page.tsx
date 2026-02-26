@@ -1,9 +1,8 @@
-import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { AnalyticsChart } from "@/components/app/analytics-chart";
 
 export default function PublisherAnalyticsPage() {
   return (
-    <DashboardShell title="Analytics" breadcrumb="Publisher / Analytics">
+    <>
       <div className="grid gap-4 lg:grid-cols-2">
         <AnalyticsChart />
         <div className="premium-card p-4">
@@ -18,6 +17,6 @@ export default function PublisherAnalyticsPage() {
         <div className="premium-card p-4">Download to open: 78%</div>
         <div className="premium-card p-4">7-day retention: 34%</div>
       </div>
-    </DashboardShell>
+    </>
   );
 }

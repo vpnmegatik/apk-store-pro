@@ -1,9 +1,8 @@
-import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { Button } from "@/components/ui/button";
 
 export default function PublisherRevenuePage() {
   return (
-    <DashboardShell title="Revenue" breadcrumb="Publisher / Revenue">
+    <>
       <div className="grid gap-4 md:grid-cols-3">
         <div className="premium-card p-5"><p className="text-sm text-gray-400">Available balance</p><p className="text-3xl font-semibold">$12,430</p></div>
         <div className="premium-card p-5"><p className="text-sm text-gray-400">Pending payout</p><p className="text-3xl font-semibold">$2,040</p></div>
@@ -16,6 +15,6 @@ export default function PublisherRevenuePage() {
         </div>
         <Button variant="gradient">Withdraw</Button>
       </div>
-    </DashboardShell>
+    </>
   );
 }

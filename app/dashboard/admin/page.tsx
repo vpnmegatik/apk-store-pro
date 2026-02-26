@@ -1,11 +1,10 @@
-import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { KpiCards } from "@/components/dashboard/kpi-cards";
 import { AnalyticsChart } from "@/components/app/analytics-chart";
 import { RecentUploadsTable } from "@/components/dashboard/recent-uploads-table";
 
 export default function AdminDashboardPage() {
   return (
-    <DashboardShell title="Admin Overview" breadcrumb="Dashboard / Overview">
+    <>
       <KpiCards />
       <div className="grid gap-4 xl:grid-cols-2">
         <AnalyticsChart />
@@ -16,6 +15,6 @@ export default function AdminDashboardPage() {
         </div>
       </div>
       <RecentUploadsTable />
-    </DashboardShell>
+    </>
   );
 }
