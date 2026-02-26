@@ -1,14 +1,9 @@
-import { requireRole } from "@/lib/auth";
-import { UploadForm } from "@/components/app/upload-form";
-
-export default async function PublisherDashboard() {
-  await requireRole(["publisher", "admin"]);
-
+export default function PublisherDashboardPage() {
   return (
-    <section className="space-y-4">
-      <h1 className="text-2xl font-bold">Publisher Dashboard</h1>
-      <p className="text-gray-500">Upload, edit apps, and monitor revenue from ads and affiliate links.</p>
-      <UploadForm />
-    </section>
+    <div className="grid gap-4 md:grid-cols-3">
+      <div className="premium-card p-5"><h2 className="font-semibold">My apps</h2><p className="text-sm text-gray-400">Manage releases and updates.</p></div>
+      <div className="premium-card p-5"><h2 className="font-semibold">Conversion</h2><p className="text-sm text-gray-400">Install conversion at 6.8%.</p></div>
+      <div className="premium-card p-5"><h2 className="font-semibold">Revenue</h2><p className="text-sm text-gray-400">$8,420 this month.</p></div>
+    </div>
   );
 }

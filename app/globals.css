@@ -3,25 +3,61 @@
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --primary: 242 87% 59%;
-  --secondary: 240 4.8% 95.9%;
-  --muted: 240 4.8% 95.9%;
-  --border: 240 5.9% 90%;
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --primary: 239 84% 67%;
+  --secondary: 199 89% 48%;
+  --muted: 210 40% 96%;
+  --border: 214 32% 91%;
   --card: 0 0% 100%;
+  --success: 142 71% 45%;
+  --warning: 38 92% 50%;
+  --danger: 0 84% 60%;
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --primary: 244 75% 64%;
-  --secondary: 240 3.7% 15.9%;
-  --muted: 240 3.7% 15.9%;
-  --border: 240 3.7% 15.9%;
-  --card: 240 10% 3.9%;
+  --background: 224 42% 7%;
+  --foreground: 210 40% 98%;
+  --primary: 239 84% 67%;
+  --secondary: 199 89% 48%;
+  --muted: 217 33% 17%;
+  --border: 217 33% 20%;
+  --card: 217 33% 16%;
+  --success: 142 71% 45%;
+  --warning: 38 92% 50%;
+  --danger: 0 84% 60%;
+}
+
+html, body {
+  min-height: 100%;
 }
 
 body {
-  @apply bg-background text-foreground antialiased;
+  @apply bg-background text-foreground antialiased font-sans;
+  background-image: radial-gradient(circle at 15% 10%, rgba(99, 102, 241, .08), transparent 24%), radial-gradient(circle at 80% 0%, rgba(14,165,233,.08), transparent 28%);
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-soft;
+  }
+
+  .premium-card {
+    @apply rounded-2xl border border-border/80 bg-card/80 backdrop-blur-sm shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-glow;
+  }
+
+  .neon-ring {
+    box-shadow: 0 0 0 1px rgba(99,102,241,.35), 0 0 32px rgba(99,102,241,.35);
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

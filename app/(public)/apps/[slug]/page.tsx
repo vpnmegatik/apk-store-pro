@@ -1,95 +1,78 @@
 import Image from "next/image";
-import { notFound } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { Tabs } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { TagBadge } from "@/components/ui/tag-badge";
 
 export const revalidate = 300;
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const { data: app } = await supabase
-    .from("apps")
-    .select("name,description,icon_url")
-    .eq("slug", params.slug)
-    .single();
-
-  if (!app) return { title: "App not found" };
-
-  return {
-    title: app.name,
-    description: app.description,
-    openGraph: {
-      title: app.name,
-      description: app.description,
-      images: [app.icon_url]
-    }
-  };
-}
-
-export default async function AppDetailPage({ params }: { params: { slug: string } }) {
-  const { data: app } = await supabase
-    .from("apps")
-    .select("*")
-    .eq("slug", params.slug)
-    .eq("status", "approved")
-    .single();
-
-  if (!app) notFound();
-
-  const { data: related } = await supabase
-    .from("apps")
-    .select("id,name,slug")
-    .neq("id", app.id)
-    .eq("status", "approved")
-    .limit(4);
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: app.name,
-    applicationCategory: "MobileApplication",
-    operatingSystem: "Android",
-    description: app.description,
-    downloadUrl: `/api/download/${app.id}`
-  };
+export default function AppDetailPage() {
+  const screenshots = [
+    "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c",
+    "https://images.unsplash.com/photo-1551650975-87deedd944c3",
+    "https://images.unsplash.com/photo-1526498460520-4c246339dccb"
+  ];
 
   return (
-    <article className="space-y-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="flex gap-4">
-        <Image src={app.icon_url} alt={app.name} width={96} height={96} className="rounded-xl" />
-        <div>
-          <h1 className="text-3xl font-bold">{app.name}</h1>
-          <p className="text-sm text-gray-500">{app.downloads.toLocaleString()} downloads</p>
-          <Button className="mt-3" asChild>
-            <a href={`/api/download/${app.id}`}>Safe Download</a>
-          </Button>
+    <article className="space-y-6 pb-20">
+      <section className="premium-card flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4">
+          <Image src={screenshots[0]} alt="app icon" width={96} height={96} className="rounded-2xl object-cover" />
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">Nova Launcher</h1>
+            <p className="text-sm text-gray-400">Version 9.1.2 • Updated 2 days ago</p>
+            <div className="mt-2 flex gap-2">
+              <TagBadge label="Verified" tone="success" />
+              <TagBadge label="Sponsored" tone="sponsored" />
+            </div>
+          </div>
         </div>
-      </div>
+        <Button variant="gradient" className="neon-ring">Safe Download</Button>
+      </section>
 
-      <p>{app.description}</p>
-
-      <section>
-        <h2 className="mb-2 text-lg font-semibold">Screenshots</h2>
-        <div className="grid gap-3 md:grid-cols-3">
-          {(app.screenshots ?? []).map((src: string) => (
-            <Image key={src} src={src} alt={`${app.name} screenshot`} width={400} height={240} className="rounded-lg border" />
+      <section className="premium-card p-4">
+        <h2 className="mb-3 text-lg font-semibold">Screenshots</h2>
+        <div className="flex snap-x gap-3 overflow-x-auto pb-2">
+          {screenshots.map((src) => (
+            <Image key={src} src={src} alt="screenshot" width={420} height={220} className="snap-start rounded-xl border border-white/10 object-cover" />
           ))}
         </div>
       </section>
 
-      <section>
-        <h2 className="mb-2 text-lg font-semibold">Version History</h2>
-        <div className="rounded border p-3 text-sm">Latest: {app.version_name ?? "1.0.0"} (code {app.version_code ?? 1})</div>
-      </section>
-
-      <section>
-        <h2 className="mb-2 text-lg font-semibold">Related Apps</h2>
-        <ul className="list-inside list-disc">
-          {related?.map((item) => (
-            <li key={item.id}><a href={`/apps/${item.slug}`}>{item.name}</a></li>
-          ))}
-        </ul>
-      </section>
+      <Tabs
+        tabs={[
+          {
+            id: "description",
+            label: "Description",
+            content: (
+              <div className="premium-card prose prose-invert max-w-none p-5">
+                <p>Nova Launcher brings an ultra-smooth, customizable Android experience with icon packs, gestures, and adaptive search.</p>
+              </div>
+            )
+          },
+          {
+            id: "history",
+            label: "Version Timeline",
+            content: (
+              <div className="premium-card space-y-3 p-5 text-sm text-gray-300">
+                <div className="border-l border-primary pl-3">v9.1.2 - performance optimization</div>
+                <div className="border-l border-white/20 pl-3">v9.1.1 - crash fixes</div>
+                <div className="border-l border-white/20 pl-3">v9.0.9 - new widgets</div>
+              </div>
+            )
+          },
+          {
+            id: "related",
+            label: "Related Apps",
+            content: (
+              <div className="grid gap-3 md:grid-cols-3">
+                {["Smart Launcher", "Apex", "Niagara"].map((name) => (
+                  <div key={name} className="premium-card p-4">{name}</div>
+                ))}
+              </div>
+            )
+          }
+        ]}
+      />
     </article>
   );
 }

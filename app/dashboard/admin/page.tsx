@@ -1,19 +1,20 @@
-import { requireRole } from "@/lib/auth";
+import { KpiCards } from "@/components/dashboard/kpi-cards";
 import { AnalyticsChart } from "@/components/app/analytics-chart";
+import { RecentUploadsTable } from "@/components/dashboard/recent-uploads-table";
 
-export default async function AdminDashboard() {
-  await requireRole(["admin", "moderator"]);
-
+export default function AdminDashboardPage() {
   return (
-    <section className="space-y-4">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-lg border p-4">Manage apps (approve/reject)</div>
-        <div className="rounded-lg border p-4">Manage users & roles</div>
-        <div className="rounded-lg border p-4">Ads manager (Google AdSense + banners)</div>
-        <div className="rounded-lg border p-4">Subscription plans (SaaS mode)</div>
+    <>
+      <KpiCards />
+      <div className="grid gap-4 xl:grid-cols-2">
+        <AnalyticsChart />
+        <div className="premium-card p-5">
+          <h3 className="font-semibold">Revenue Trend</h3>
+          <p className="mt-2 text-sm text-gray-400">MRR +12.4% with strong CTR from native ad placements.</p>
+          <div className="mt-4 h-52 rounded-xl border border-white/10 bg-gradient-to-br from-success/15 via-secondary/10 to-primary/20" />
+        </div>
       </div>
-      <AnalyticsChart />
-    </section>
+      <RecentUploadsTable />
+    </>
   );
 }

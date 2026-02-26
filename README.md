@@ -1,93 +1,66 @@
 # apk-store-pro
 
-Production-ready APK distribution platform (APKPure-style) with role-based dashboards, upload review flow, monetization modules, and SEO-first public pages.
+Production-ready APK marketplace built on Next.js 15 App Router with a single, unified design system and consolidated layout architecture.
 
-## Stack
-- Next.js 15 (App Router) + TypeScript
-- Tailwind CSS + shadcn-style component primitives
-- Framer Motion + Recharts
-- Supabase (Auth, Postgres, Storage)
-- Vercel deployment + GitHub Actions CI
+## What is included
 
-## Features
-### Public site
-- SEO homepage with instant app search
-- Categories page
-- App detail pages with SSR/ISR
-- JSON-LD structured data + OpenGraph metadata
-- Dynamic sitemap and robots
+### 🎨 Unified design system
+- One token source via `app/globals.css` CSS variables + `tailwind.config.ts`
+- Dark-first + light theme support with persisted theme preference
+- Inter typography, 8px spacing rhythm, soft shadows, glassmorphism cards, and aurora backgrounds
+- Shared motion presets for transitions and sidebar interactions
 
-### Upload & moderation
-- APK/XAPK validation
-- Slug generation
-- Screenshot upload
-- Pending/approved/rejected status workflow
-- Signed download URLs + per-endpoint rate limiting
+### 🌐 Public product surfaces
+- Homepage with hero, trending, categories, featured sections, testimonials, and CTA
+- App details (SSR-friendly route), categories, search, and publisher landing pages
+- Public route-group layout for consistent top navigation and mobile bottom nav
 
-### Dashboards
-- **Admin/Moderator:** approvals, users, ads, analytics, subscriptions
-- **Publisher:** app upload/edit, revenue and download view
-- **User:** favorites and comments
+### 📊 Dashboard system
+- Single dashboard layout wrapper for all admin/publisher/user pages
+- Collapsible sidebar, sticky top bar, breadcrumb/title generation from App Router path
+- Admin: overview, apps management, ads manager, users
+- Publisher: overview, my apps, upload wizard, analytics, revenue
+- Shared settings and user dashboard routes
 
-### Monetization
-- Google AdSense slots
-- Custom banner ads
-- Affiliate links per app
-- SaaS subscription schema scaffold
+### 🧩 Reusable components
+- Buttons, badges, tabs, modal, toast, skeletons, animated counters
+- Marketing and dashboard component primitives
+- Supabase-ready API routes and schema scaffolding
 
-### Bonus implemented scaffolds
-- Multi-language ready architecture
-- Public API endpoint for developers (`/api/apps`)
-- AI description generation endpoint (`/api/ai-description`)
-- Malware scan integration endpoint (`/api/scan`)
-
-## Project structure
+## Folder highlights
 
 ```txt
 app/
-  (public)/
-  dashboard/
-  api/
+  (public)/        # public website routes + layout
+  auth/            # login/register
+  dashboard/       # dashboard routes + shared dashboard layout
+  api/             # platform APIs
 components/
+  app/
+  dashboard/
+  layout/
+  marketing/
+  providers/
+  ui/
 lib/
-hooks/
-types/
-utils/
-supabase/
+  motion/
+  auth.ts
+  storage.ts
+  supabase.ts
+  utils.ts
 ```
 
-## Setup
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Configure environment:
-   ```bash
-   cp .env.example .env.local
-   ```
-3. Initialize Supabase SQL schema:
-   - Run `supabase/schema.sql` in the Supabase SQL editor.
-4. Create Supabase Storage buckets:
-   - `apks` (private)
-   - `icons` (public)
-   - `screenshots` (public)
-5. Start development server:
-   ```bash
-   npm run dev
-   ```
+## Run locally
 
-## Deploy
-### Vercel
-1. Import repository into Vercel.
-2. Configure env variables from `.env.example`.
-3. Set build command: `npm run build`.
-4. Deploy.
+```bash
+npm install
+npm run dev
+```
 
-### GitHub CI/CD
-- Workflow in `.github/workflows/ci.yml` runs typecheck, lint, and build.
+## Quality checks
 
-## Security checklist
-- Enforce RLS policies in Supabase.
-- Keep APK bucket private and only serve via signed URLs.
-- Add edge/CDN WAF rules in front of download endpoints.
-- Connect malware scan endpoint to an actual scanning vendor.
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```
