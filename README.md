@@ -1,65 +1,51 @@
 # apk-store-pro
 
-Production-ready APK marketplace built on Next.js 15 App Router with a single, unified design system and consolidated layout architecture.
+Production-grade APK marketplace with hardened Supabase integration, secure upload/download APIs, and App Router architecture for Vercel.
 
-## What is included
+## Architecture
 
-### 🎨 Unified design system
-- One token source via `app/globals.css` CSS variables + `tailwind.config.ts`
-- Dark-first + light theme support with persisted theme preference
-- Inter typography, 8px spacing rhythm, soft shadows, glassmorphism cards, and aurora backgrounds
-- Shared motion presets for transitions and sidebar interactions
+- `app/` route handlers, pages, metadata, middleware-protected surfaces
+- `components/` reusable UI, dashboard shell, monetization slots
+- `lib/` env, auth, security, logging, Supabase clients
+- `services/` business logic (upload/download/auth)
+- `repositories/` data access layer
+- `types/` shared domain types
+- `utils/` utility helpers
 
-### 🌐 Public product surfaces
-- Homepage with hero, trending, categories, featured sections, testimonials, and CTA
-- App details (SSR-friendly route), categories, search, and publisher landing pages
-- Public route-group layout for consistent top navigation and mobile bottom nav
+## Security posture
 
-### 📊 Dashboard system
-- Single dashboard layout wrapper for all admin/publisher/user pages
-- Collapsible sidebar, sticky top bar, breadcrumb/title generation from App Router path
-- Admin: overview, apps management, ads manager, users
-- Publisher: overview, my apps, upload wizard, analytics, revenue
-- Shared settings and user dashboard routes
+- Supabase client split:
+  - `lib/supabaseClient.ts` browser anon SDK
+  - `lib/supabaseServer.ts` server auth SDK + service-role SDK
+- Role-gated middleware for `/dashboard/*` and `/api/upload`
+- API rate limiting and abuse controls
+- Centralized route error handling and structured logging
+- Server-only upload processing with strict file validation and size limits
+- Signed URL downloads from private storage bucket paths
 
-### 🧩 Reusable components
-- Buttons, badges, tabs, modal, toast, skeletons, animated counters
-- Marketing and dashboard component primitives
-- Supabase-ready API routes and schema scaffolding
+## Storage layout
 
-## Folder highlights
+- `private-assets/apks/*`
+- `public-assets/icons/*`
+- `public-assets/screenshots/*`
 
-```txt
-app/
-  (public)/        # public website routes + layout
-  auth/            # login/register
-  dashboard/       # dashboard routes + shared dashboard layout
-  api/             # platform APIs
-components/
-  app/
-  dashboard/
-  layout/
-  marketing/
-  providers/
-  ui/
-lib/
-  motion/
-  auth.ts
-  storage.ts
-  supabase.ts
-  utils.ts
-```
+## Environment
 
-## Run locally
+Copy `.env.example` to `.env.local` and provide all required variables.
+
+## Deploy (Vercel)
+
+1. Set environment variables in Vercel project settings.
+2. Configure Supabase buckets:
+   - `private-assets` (private)
+   - `public-assets` (public)
+3. Run migration SQL (`supabase/schema.sql`).
+4. Deploy.
+
+## Commands
 
 ```bash
 npm install
-npm run dev
-```
-
-## Quality checks
-
-```bash
 npm run typecheck
 npm run lint
 npm run build

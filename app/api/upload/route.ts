@@ -1,59 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
-import { slugify } from "@/lib/utils";
+import { processAppUpload } from "@/services/uploadService";
+import { consumeRateLimit } from "@/lib/rate-limit";
+import { getRequestIp } from "@/lib/request";
+import { handleRouteError, AppError } from "@/lib/errors";
+import { requireServerRole } from "@/services/authService";
+import { logInfo } from "@/lib/logger";
 
-const APK_TYPES = ["application/vnd.android.package-archive", "application/octet-stream"];
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const form = await req.formData();
-  const name = String(form.get("name") ?? "");
-  const description = String(form.get("description") ?? "");
-  const apk = form.get("apk") as File | null;
-  const icon = form.get("icon") as File | null;
+  try {
+    const ip = getRequestIp(req);
+    const rate = consumeRateLimit(`upload:${ip}`, 10, 60_000);
+    if (!rate.allowed) {
+      throw new AppError(429, "Rate limit exceeded");
+    }
 
-  if (!name || !description || !apk || !icon) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const actor = await requireServerRole(["admin", "publisher"]);
+    const formData = await req.formData();
+    const result = await processAppUpload(formData, actor.userId);
+
+    logInfo("app_upload_created", { actorId: actor.userId, slug: result.slug });
+
+    return NextResponse.json({ ok: true, slug: result.slug }, { status: 201 });
+  } catch (error) {
+    return handleRouteError(error);
   }
-
-  const fileName = apk.name.toLowerCase();
-  if (!(fileName.endsWith(".apk") || fileName.endsWith(".xapk")) && !APK_TYPES.includes(apk.type)) {
-    return NextResponse.json({ error: "Invalid file format" }, { status: 400 });
-  }
-
-  const slug = slugify(name);
-  const apkPath = `uploads/${slug}/${Date.now()}-${apk.name}`;
-  const iconPath = `uploads/${slug}/icon-${Date.now()}-${icon.name}`;
-
-  const [apkRes, iconRes] = await Promise.all([
-    supabase.storage.from("apks").upload(apkPath, apk, { upsert: false }),
-    supabase.storage.from("icons").upload(iconPath, icon, { upsert: false })
-  ]);
-
-  if (apkRes.error || iconRes.error) {
-    return NextResponse.json({ error: "Storage upload failed" }, { status: 500 });
-  }
-
-  const screenshotFiles = form.getAll("screenshots").filter((item): item is File => item instanceof File);
-  const screenshotPaths: string[] = [];
-  for (const screenshot of screenshotFiles) {
-    const screenshotPath = `uploads/${slug}/ss-${Date.now()}-${screenshot.name}`;
-    const upload = await supabase.storage.from("screenshots").upload(screenshotPath, screenshot, { upsert: false });
-    if (!upload.error) screenshotPaths.push(screenshotPath);
-  }
-
-  const { error } = await supabase.from("apps").insert({
-    name,
-    slug,
-    description,
-    apk_url: apkPath,
-    icon_url: iconPath,
-    screenshots: screenshotPaths,
-    status: "pending"
-  });
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ ok: true, slug });
 }

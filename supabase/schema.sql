@@ -1,8 +1,7 @@
--- Enable extensions
 create extension if not exists "uuid-ossp";
 
 create type public.app_status as enum ('pending', 'approved', 'rejected');
-create type public.user_role as enum ('admin', 'moderator', 'publisher', 'user');
+create type public.user_role as enum ('admin', 'publisher', 'user');
 create type public.ad_type as enum ('banner', 'native');
 
 create table if not exists public.users (
@@ -45,41 +44,51 @@ create table if not exists public.ads (
   created_at timestamptz not null default now()
 );
 
-create table if not exists public.comments (
-  id uuid primary key default uuid_generate_v4(),
-  app_id uuid references public.apps(id) on delete cascade,
-  user_id uuid references public.users(id) on delete cascade,
-  content text not null,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.favorites (
-  user_id uuid references public.users(id) on delete cascade,
-  app_id uuid references public.apps(id) on delete cascade,
-  created_at timestamptz not null default now(),
-  primary key (user_id, app_id)
-);
-
-create table if not exists public.subscriptions (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references public.users(id) on delete cascade,
-  plan_name text not null,
-  status text not null,
-  renews_at timestamptz,
-  created_at timestamptz not null default now()
-);
-
 alter table public.users enable row level security;
 alter table public.apps enable row level security;
 alter table public.ads enable row level security;
-alter table public.comments enable row level security;
-alter table public.favorites enable row level security;
 
-create policy "public can view approved apps" on public.apps
+create policy "users_view_self" on public.users
+for select using (auth.uid() = id);
+
+create policy "admins_manage_users" on public.users
+for all using (
+  exists(select 1 from public.users u where u.id = auth.uid() and u.role = 'admin')
+);
+
+create policy "public_view_approved_apps" on public.apps
 for select using (status = 'approved');
 
-create policy "publishers can insert apps" on public.apps
-for insert with check (auth.uid() = author_id);
+create policy "publisher_insert_apps" on public.apps
+for insert with check (
+  auth.uid() = author_id and exists(select 1 from public.users u where u.id = auth.uid() and u.role in ('publisher', 'admin'))
+);
 
-create policy "authors can edit own apps" on public.apps
-for update using (auth.uid() = author_id);
+create policy "author_update_own_apps" on public.apps
+for update using (
+  auth.uid() = author_id or exists(select 1 from public.users u where u.id = auth.uid() and u.role = 'admin')
+);
+
+create policy "admin_manage_ads" on public.ads
+for all using (
+  exists(select 1 from public.users u where u.id = auth.uid() and u.role = 'admin')
+);
+
+insert into storage.buckets (id, name, public)
+values ('private-assets', 'private-assets', false)
+on conflict (id) do nothing;
+
+insert into storage.buckets (id, name, public)
+values ('public-assets', 'public-assets', true)
+on conflict (id) do nothing;
+
+create policy "public_assets_read" on storage.objects
+for select using (bucket_id = 'public-assets');
+
+create policy "service_private_assets_full" on storage.objects
+for all using (bucket_id = 'private-assets' and auth.role() = 'service_role')
+with check (bucket_id = 'private-assets' and auth.role() = 'service_role');
+
+create policy "service_public_assets_write" on storage.objects
+for all using (bucket_id = 'public-assets' and auth.role() = 'service_role')
+with check (bucket_id = 'public-assets' and auth.role() = 'service_role');

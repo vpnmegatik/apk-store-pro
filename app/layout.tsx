@@ -2,20 +2,26 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
+import { clientEnv } from "@/lib/env";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://apk-store-pro.vercel.app"),
+  metadataBase: new URL(clientEnv.NEXT_PUBLIC_SITE_URL),
   title: {
     default: "APK Store Pro",
     template: "%s | APK Store Pro"
   },
-  description: "Premium Android app marketplace with secure distribution and publisher monetization.",
+  description: "Secure Android APK marketplace with curated apps, safe downloads, and publisher monetization.",
   openGraph: {
     title: "APK Store Pro",
-    description: "Discover trusted APKs with a premium SaaS experience.",
-    type: "website"
+    description: "Discover trusted APKs with verified metadata and secure distribution.",
+    type: "website",
+    url: clientEnv.NEXT_PUBLIC_SITE_URL,
+    siteName: "APK Store Pro"
+  },
+  alternates: {
+    canonical: "/"
   }
 };
 

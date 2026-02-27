@@ -8,7 +8,7 @@ export default function PublisherAnalyticsPage() {
         <div className="premium-card p-4">
           <h3 className="font-semibold">Top countries</h3>
           <div className="mt-3 h-64 rounded-xl border border-white/10 bg-gradient-to-br from-secondary/15 via-primary/10 to-transparent p-4 text-sm text-gray-300">
-            Country heatmap placeholder (US, IN, BR, ID, PH)
+            Top markets: US, IN, BR, ID, PH
           </div>
         </div>
       </div>

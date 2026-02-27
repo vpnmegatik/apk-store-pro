@@ -1,4 +1,4 @@
-export type Role = "admin" | "moderator" | "publisher" | "user";
+export type Role = "admin" | "publisher" | "user";
 export type AppStatus = "pending" | "approved" | "rejected";
 
 export interface AppRecord {

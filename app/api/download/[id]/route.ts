@@ -1,18 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
-import { createSignedDownloadUrl } from "@/lib/storage";
-import { rateLimit } from "@/utils/rate-limit";
+import { consumeRateLimit } from "@/lib/rate-limit";
+import { getRequestIp } from "@/lib/request";
+import { AppError, handleRouteError } from "@/lib/errors";
+import { generateDownloadUrlById } from "@/services/downloadService";
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
-  if (!rateLimit(`download:${params.id}`, 20, 60_000)) {
-    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+export const runtime = "nodejs";
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const ip = getRequestIp(req);
+    const rate = consumeRateLimit(`download:${ip}:${params.id}`, 30, 60_000);
+    if (!rate.allowed) throw new AppError(429, "Rate limit exceeded");
+
+    const signedUrl = await generateDownloadUrlById(params.id);
+    return NextResponse.redirect(signedUrl, {
+      headers: {
+        "Cache-Control": "private, no-store"
+      }
+    });
+  } catch (error) {
+    return handleRouteError(error);
   }
-
-  const { data: app } = await supabase.from("apps").select("apk_url,downloads").eq("id", params.id).single();
-  if (!app) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  const signedUrl = await createSignedDownloadUrl(app.apk_url);
-  await supabase.from("apps").update({ downloads: app.downloads + 1 }).eq("id", params.id);
-
-  return NextResponse.redirect(signedUrl);
 }

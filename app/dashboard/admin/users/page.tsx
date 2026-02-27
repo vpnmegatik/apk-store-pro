@@ -2,7 +2,6 @@ import { TagBadge } from "@/components/ui/tag-badge";
 
 const users = [
   { name: "Ava", role: "admin" },
-  { name: "Noah", role: "moderator" },
   { name: "Liam", role: "publisher" },
   { name: "Emma", role: "user" }
 ] as const;

@@ -1,12 +1,15 @@
 import type { MetadataRoute } from "next";
-import { supabase } from "@/lib/supabase";
+import { listApprovedApps } from "@/repositories/appsRepository";
+import { clientEnv } from "@/lib/env";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { data: apps } = await supabase.from("apps").select("slug,created_at").eq("status", "approved");
-  const appRoutes = (apps ?? []).map((app) => ({
-    url: `https://apk-store-pro.vercel.app/apps/${app.slug}`,
+  const apps = await listApprovedApps();
+  const base = clientEnv.NEXT_PUBLIC_SITE_URL;
+
+  const appRoutes = apps.map((app) => ({
+    url: `${base}/apps/${app.slug}`,
     lastModified: app.created_at
   }));
 
-  return [{ url: "https://apk-store-pro.vercel.app", lastModified: new Date() }, ...appRoutes];
+  return [{ url: base, lastModified: new Date() }, ...appRoutes];
 }

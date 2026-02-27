@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
+import { AdBanner } from "@/components/app/ad-banner";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,7 +18,13 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-6 md:px-6">{children}</main>
+      <main className="mx-auto max-w-7xl px-4 py-6 md:px-6">
+        <AdBanner slot="top-leaderboard" />
+        <div className="mt-6">{children}</div>
+        <div className="mt-8">
+          <AdBanner slot="bottom-native" />
+        </div>
+      </main>
       <MobileBottomNav />
     </>
   );
