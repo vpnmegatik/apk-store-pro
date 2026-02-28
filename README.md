@@ -29,29 +29,9 @@ Production-grade APK marketplace with hardened Supabase integration, secure uplo
 - `public-assets/icons/*`
 - `public-assets/screenshots/*`
 
-## Environment files
+## Environment
 
-Use `.env.local` for local development (never commit real secrets), and keep `.env.example` sanitized with placeholders only.
-
-### `.env.local` template sections
-
-- Core
-- Supabase Public (client-safe)
-- Supabase Secret (server-only)
-- Optional Ads/Malware/AI integrations
-
-## Vercel environment mapping
-
-Set the following in Vercel Project → Settings → Environment Variables:
-
-- `NEXT_PUBLIC_SITE_URL` → production URL (e.g. `https://apk-store-pro.vercel.app`)
-- `NEXT_PUBLIC_SUPABASE_URL` → Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` → Supabase anon key (client-safe)
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` → Supabase publishable client key
-- `SUPABASE_SERVICE_ROLE_KEY` → service role key (server only, never expose)
-- `NEXT_PUBLIC_ADSENSE_CLIENT` → optional AdSense client ID
-- `MALWARE_SCAN_API_KEY` → optional malware API secret
-- `OPENAI_API_KEY` → optional OpenAI API secret
+Copy `.env.example` to `.env.local` and provide all required variables.
 
 ## Deploy (Vercel)
 
