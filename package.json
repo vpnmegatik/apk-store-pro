@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "18.x"
+    "node": ">=18.18.0"
   },
   "scripts": {
     "dev": "next dev",
@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.1",
@@ -43,6 +44,5 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "recharts": "2.12.7"
-  },
-  "packageManager": "npm@10"
+  }
 }
