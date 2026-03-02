@@ -1,0 +1,83 @@
+# apk-store-pro
+
+Production-grade APK marketplace with hardened Supabase integration, secure upload/download APIs, and App Router architecture for Vercel.
+
+## Architecture
+
+- `app/` route handlers, pages, metadata, middleware-protected surfaces
+- `components/` reusable UI, dashboard shell, monetization slots
+- `lib/` env, auth, security, logging, Supabase clients
+- `services/` business logic (upload/download/auth)
+- `repositories/` data access layer
+- `types/` shared domain types
+- `config/` central runtime/app constants
+- `utils/` utility helpers
+
+## Runtime and deployment
+
+- Node.js: `20.x` (via `package.json` engines)
+- Next.js: `14.2.x` stable
+- React: `18.3.1` stable
+- Optimized for Vercel deployment with App Router and strict env validation
+
+## Security posture
+
+- Supabase server/service-role usage stays on server-only modules
+- Role-gated middleware for `/dashboard/*` and `/api/upload`
+- API rate limiting and abuse controls
+- Centralized route error handling and structured logging
+- Server-only upload processing with strict file validation and size limits
+- Signed URL downloads from private storage bucket paths
+
+## Storage layout
+
+- `private-assets/apks/*`
+- `public-assets/icons/*`
+- `public-assets/screenshots/*`
+
+## Environment files
+
+Use `.env.local` for local development (never commit real secrets), and keep `.env.example` sanitized with placeholders only.
+
+### Required variables
+
+- `NEXT_PUBLIC_SITE_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+### Optional variables
+
+- `NEXT_PUBLIC_ADSENSE_CLIENT`
+- `MALWARE_SCAN_API_KEY`
+- `OPENAI_API_KEY`
+
+## Vercel environment mapping
+
+Set the following in Vercel Project → Settings → Environment Variables:
+
+- `NEXT_PUBLIC_SITE_URL` → production URL (e.g. `https://apk-store-pro.vercel.app`)
+- `NEXT_PUBLIC_SUPABASE_URL` → Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` → Supabase anon key (client-safe)
+- `SUPABASE_SERVICE_ROLE_KEY` → service role key (server only, never expose)
+- `NEXT_PUBLIC_ADSENSE_CLIENT` → optional AdSense client ID
+- `MALWARE_SCAN_API_KEY` → optional malware API secret
+- `OPENAI_API_KEY` → optional OpenAI API secret
+
+## Deploy (Vercel)
+
+1. Set environment variables in Vercel project settings.
+2. Configure Supabase buckets:
+   - `private-assets` (private)
+   - `public-assets` (public)
+3. Run migration SQL (`supabase/schema.sql`).
+4. Deploy.
+
+## Commands
+
+```bash
+npm install
+npm run typecheck
+npm run lint
+npm run build
+```
